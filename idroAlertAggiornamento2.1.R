@@ -67,7 +67,7 @@ regione<-c(as.character(tabellaIdro2$Regione))
 #################################################
 ### CREO TABELLA IDROMETRI CON VALORE ATTUALE ###
 #################################################
-
+#n=40
 for (n in lista) {
    url<-listaFiumi[[n]][[4]]
    fiume<-listaFiumi[[n]][[2]]
@@ -86,7 +86,8 @@ for (n in lista) {
          anno<-as.character(substr(tableIdro$Data,7,10))
          mese<-as.character(substr(tableIdro$Data,4,5))
          giorno<-as.character(substr(tableIdro$Data,1,2))
-         oraI<-as.character(substr(tableIdro$Ora,1,2))
+         oraI<-as.numeric(substr(tableIdro$Ora,1,2))
+         oraI<-oraI+1
          minutoI<-as.character(substr(tableIdro$Ora,4,5))
          secondi<-"00"
          #print(tableIdro$Livello)
@@ -125,30 +126,21 @@ for (n in lista) {
          pagina4<-data.frame(pagina3)
          stringa<-(pagina4[2,2])
          # estraggo le stringhe dei valori numerici
-         numeriIdro<-c(na.omit(as.numeric(unlist(strsplit(unlist(stringa), "[^0-9]+")))))
-         #numeriIdro
-         giorno<-numeriIdro[3]
-         if (giorno<=9) {
-            giorno<-paste("0",giorno,sep="")
-         }
-         mese<-numeriIdro[4]
-         if (mese<=9) {
-            mese<-paste("0",mese,sep="")
-         }
-         anno<-numeriIdro[5]
-         ora<-numeriIdro[6]
-         if (ora<=9) {
-            ora<-paste("0",ora,sep="")
-         }
-         minuto<-numeriIdro[7]
-         if (minuto<=9) {
-            minuto<-paste("0",minuto,sep="")
-         }
-         secondi<-"00"
-         livelloC<-substr(stringa,1,5)
-         livelloC<-gsub("m","",livelloC)
-         livelloN<-as.numeric(livelloC)
+         livelloVec<-strsplit(stringa, " - ")
+         livelloN<-livelloVec[[1]][[1]]
+         livelloN<-as.numeric(gsub("m","",livelloN,perl=TRUE,fixed=FALSE))
          livello<-gsub("\\.", ",",livelloN)
+         #numeriIdro
+         dataVec<-strsplit(livelloVec[[1]][[2]]," ore ")
+         data<-strsplit(dataVec[[1]][[1]],"/")
+         orario<-strsplit(dataVec[[1]][[2]],":")
+         anno<-data[[1]][[3]]
+         mese<-data[[1]][[2]]
+         giorno<-data[[1]][[1]]
+         ora<-orario[[1]][[1]]
+         minuto<-orario[[1]][[2]]
+         secondi<-"00"
+     
          # creo la tabella di riferimento temporanea che salva il valore attuale del fiume
          tableIdro<-pagina4
          tableIdro$Data<-paste(anno,mese,giorno,sep="-")

@@ -17,6 +17,7 @@ library(RCurl)
 library(xtable)
 library(pander)
 library(linkR)
+library(xtable)
 
 # Legge file utenti e manda mail in caso di Alert positivi o richiesta di report.
 setwd("/home/argo/workspace/R/idroAlert1.0/")
@@ -27,7 +28,7 @@ setwd("/home/argo/workspace/R/idroAlert1.0/")
 # recupero vecchio file tabellaIdro2
 tabellaIdro2<-read.csv("./report/tabellaIdroRep.csv")
 
-elencoFiles<-list.files(path="./conf/utenti/")
+elencoFiles<-list.files("*.conf",path="./conf/utenti/",include.dirs = TRUE)
 lunghezzaFiles<-length(elencoFiles)
 conteggio<-c(1:as.numeric(lunghezzaFiles))
 elencoUtenti<-data.frame()
@@ -43,14 +44,17 @@ for (numero in conteggio) {
 
 # recupero file degli utenti
 #elencoUtenti<-c("Melloni","Bubu")
-nomeUt<-2
+# nomeUt<-2
 nomeUtente<-as.character(elencoUtenti[nomeUt])
 for (nomeUtente in as.character(elencoUtenti)) {
    nomeFileUtente<-paste("utente-",nomeUtente,".conf",sep="")
    nomeFileUtente<-paste("./conf/utenti/",nomeFileUtente,sep="")
-   listaProfile<-read.csv(file=nomeFileUtente, sep="|",na.strings="",fill=TRUE,blank.lines.skip=TRUE)
-   listaProfile[]<-lapply(listaProfile, as.character)
-   
+   listaProfile<-read.csv(file=nomeFileUtente,
+                          sep="|",na.strings="",
+                          fill=TRUE,blank.lines.skip=TRUE,
+                          stringsAsFactors = FALSE)
+   # write.table(listaProfile,nomeFileUtente,sep="|",dec=",",row.names=FALSE,col.names = TRUE)
+   # listaProfile[]<-lapply(listaProfile, as.character)
    # nome utente
    utente<-as.character(listaProfile[1,2])
    print(utente)
@@ -188,7 +192,25 @@ for (nomeUtente in as.character(elencoUtenti)) {
    # tabellaIdro2UT$Data<-gsub("-","/",tabellaIdro2UT$Data)
    nomeFileTabUt<-paste("./report/tabellaFiumi-",nomeUtente,".csv",sep="")
    colnames(tabellaIdroUt)<-c("Fiume","Idrometro","Regione","ASotto","Adesso","ASopra","Data","Ora")
-   write.table(tabellaIdroUt,file=nomeFileTabUt,row.names = FALSE,quote=TRUE,sep=",")
+   #install.packages("stargazer")
+   #library(stargazer)
+   #stargazer(tabellaIdroUt,type="html", title="Descriptive statistics",out="table1.txt")
+   #out<-capture.output(View(tabellaIdroUt))
+   #cat("Report Idrometri",out,file=nomeFileTabUt,sep="n",append=TRUE)
+   
+   write.table(tabellaIdroUt,file=nomeFileTabUt,row.names=FALSE,sep=",")
+   #source(tabellaIdroUt)
+   #pdf(nomeFileTabUt,height=8,width=7)
+   #pdf<-print(xtable(tabellaIdroUt[,]),hline.after=c(2,3))
+   # grid.table(pdf)
+   #dev.off()
+   #pdf(write)
+   #postscript(file=nomeFileTabUt)
+   #pdf
+   #dev.off()
+   #dat <- pdf[,1:8]
+   
+   #write.table(tabellaIdroUt,file=nomeFileTabUt,row.names = FALSE,quote=TRUE,sep=",")
    
    ### MAIL REPORT ###
    if (reportUt==1) {
