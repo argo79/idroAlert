@@ -9,9 +9,14 @@ Due script R:
 USO:
 
 $Rscript idroAlertAggiornamentiX.Y.R
+
 [1] "Tutto è andato bene."
+
 [1] "Ho salvato il file tabellaIdroRep.csv con i valori aggiornati di tutti gli idrometri."
+
 $Rscript idroAlertProfileX.Y.R
+
 [1] invio mail......
+
 $
 
