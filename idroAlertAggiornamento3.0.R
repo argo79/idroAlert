@@ -98,7 +98,7 @@ if (!file.exists("./report/tabellaIdroRep.csv")) {
 #################################################
 ### CREO TABELLA IDROMETRI CON VALORE ATTUALE ###
 #################################################
-n=55
+n=15
 for (n in lista) {
    url<-listaFiumi[[n]][[4]]
    fiume<-listaFiumi[[n]][[2]]
@@ -116,6 +116,11 @@ for (n in lista) {
 #   print(url)
 
    pagina<-getURL(url)
+   
+   ##########################################
+   #####            VENETO             ######
+   ##########################################
+   
    if (listaFiumi[[n]][[5]]=="Veneto") {
       grepl("<table>",pagina)
       if (grepl("<table>",pagina[1])==TRUE) {
@@ -141,10 +146,11 @@ for (n in lista) {
          livelloOld<-tabellaIdroBak[n,7]
          livelloOld<-as.character(livelloOld)
          livelloOld<-as.numeric(gsub(",","\\.",livelloOld))
-         differenza<-livello-livelloOld
+         differenza<-as.numeric(livello-livelloOld)
          if (is.na(differenza)) {
             differenza<-0
          }
+         differenza<-format(round(differenza, 2), nsmall = 2)
          tabellaIdro2[n,6]<-differenza
          tabellaIdro2[n,7]<-livello
          tabellaIdro2[n,8]<-tableIdro$Data
@@ -157,24 +163,24 @@ for (n in lista) {
          livelloConfMin<-as.numeric(gsub(",","\\.",livelloConfMin))
          if (livello<=livelloConfMin || is.na(livelloConfMin)) {
             tabellaIdro2[n,10]<-livello
-            tabellaIdro2[n,11]<-tableIdro$Data
-            tabellaIdro2[n,12]<-tableIdro$Ora
+            tabellaIdro2[n,11]<-as.character(tableIdro$Data)
+            tabellaIdro2[n,12]<-as.character(tableIdro$Ora)
          } else {
             tabellaIdro2[n,10]<-tabellaIdroBak[n,10]
-            tabellaIdro2[n,11]<-tabellaIdroBak[n,11]
-            tabellaIdro2[n,12]<-tabellaIdroBak[n,12]
+            tabellaIdro2[n,11]<-as.character(tabellaIdroBak[n,11])
+            tabellaIdro2[n,12]<-as.character(tabellaIdroBak[n,12])
          }
          livelloConfMax<-tabellaIdroBak[n,13]
          livelloConfMax<-as.character(livelloConfMax)
          livelloConfMax<-as.numeric(gsub(",","\\.",livelloConfMax))
          if (livello>=livelloConfMax || is.na(livelloConfMax)) {
             tabellaIdro2[n,13]<-livello
-            tabellaIdro2[n,14]<-tableIdro$Data
-            tabellaIdro2[n,15]<-tableIdro$Ora
+            tabellaIdro2[n,14]<-as.character(tableIdro$Data)
+            tabellaIdro2[n,15]<-as.character(tableIdro$Ora)
          } else {
             tabellaIdro2[n,13]<-tabellaIdroBak[n,13]
-            tabellaIdro2[n,14]<-tabellaIdroBak[n,14]
-            tabellaIdro2[n,15]<-tabellaIdroBak[n,15]
+            tabellaIdro2[n,14]<-as.character(tabellaIdroBak[n,14])
+            tabellaIdro2[n,15]<-as.character(tabellaIdroBak[n,15])
          }
          # prova<-7-5
          
@@ -182,7 +188,7 @@ for (n in lista) {
          nomeFile<-paste(fiume,idrometro,sep="-")
          nomeFile<-paste("./report/fiumi/Veneto/",nomeFile,".csv",sep="")
          #stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livello,"m.")
-         stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livelloM,"m. Alle",oraI,"e",minutoI,"minuti del giorno",giorno,mese,anno,"e presenta una differenza di",differenza,"cm.")
+         stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livello,"m. Alle",oraI,"e",minutoI,"minuti del giorno",giorno,mese,anno,"e presenta una differenza di",differenza,"m.")
          print(stampa)
          write.table(tableIdro,file=nomeFile,row.names = FALSE,col.names = FALSE,sep=";",append=TRUE,quote=FALSE)
       }
@@ -193,6 +199,11 @@ for (n in lista) {
          print(stampa)
       }   
    }
+   
+   ##########################################
+   #####            FRIULI             ######
+   ##########################################
+   
    if (listaFiumi[[n]][[5]]=="Friuli") {
       grepl("(Idrometro)",pagina)
       if (grepl("(Idrometro)",pagina)==TRUE) {
@@ -251,12 +262,13 @@ for (n in lista) {
             livelloOld<-tabellaIdroBak[n,7]
             livelloOld<-as.character(livelloOld)
             livelloOld<-as.numeric(gsub(",","\\.",livelloOld))
-            differenza<-livello-livelloOld
+            differenza<-as.numeric(livello-livelloOld)
             if (is.na(differenza)) {
                differenza<-0
             }
+            differenza<-format(round(differenza, 2), nsmall = 2)
             tabellaIdro2[n,6]<-differenza
-            tabellaIdro2[n,7]<-livelloN
+            tabellaIdro2[n,7]<-livello
             tabellaIdro2[n,8]<-dataI
             tabellaIdro2[n,9]<-oraI
             # Aggiorno i minimi e i massimi
@@ -264,31 +276,31 @@ for (n in lista) {
             livelloConfMin<-as.character(livelloConfMin)
             livelloConfMin<-as.numeric(gsub(",","\\.",livelloConfMin))
             if (livello<=livelloConfMin || is.na(livelloConfMin)) {
-               tabellaIdro2[n,10]<-livelloN
-               tabellaIdro2[n,11]<-dataI
-               tabellaIdro2[n,12]<-oraI
+               tabellaIdro2[n,10]<-livello
+               tabellaIdro2[n,11]<-as.character(dataI)
+               tabellaIdro2[n,12]<-as.character(oraI)
             } else {
                tabellaIdro2[n,10]<-tabellaIdroBak[n,10]
-               tabellaIdro2[n,11]<-tabellaIdroBak[n,11]
-               tabellaIdro2[n,12]<-tabellaIdroBak[n,12]
+               tabellaIdro2[n,11]<-as.character(tabellaIdroBak[n,11])
+               tabellaIdro2[n,12]<-as.character(tabellaIdroBak[n,12])
             }
             livelloConfMax<-(tabellaIdroBak[n,13])
             livelloConfMax<-as.character(livelloConfMax)
             livelloConfMax<-as.numeric(gsub(",","\\.",livelloConfMax))
             if (livello>=livelloConfMax || is.na(livelloConfMax)) {
-               tabellaIdro2[n,13]<-livelloN
-               tabellaIdro2[n,14]<-dataI
-               tabellaIdro2[n,15]<-oraI
+               tabellaIdro2[n,13]<-livello
+               tabellaIdro2[n,14]<-as.character(dataI)
+               tabellaIdro2[n,15]<-as.character(oraI)
             } else {
                tabellaIdro2[n,13]<-tabellaIdroBak[n,13]
-               tabellaIdro2[n,14]<-tabellaIdroBak[n,14]
-               tabellaIdro2[n,15]<-tabellaIdroBak[n,15]
+               tabellaIdro2[n,14]<-as.character(tabellaIdroBak[n,14])
+               tabellaIdro2[n,15]<-as.character(tabellaIdroBak[n,15])
             }
             tableIdro<-tableIdro[1,c(4,5,6)]
             #tableIdro<-tableIdro[2,]
             nomeFile<-paste(fiume,idrometro,sep="-")
             nomeFile<-paste("./report/fiumi/Friuli/",nomeFile,".csv",sep="")
-            stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livello,"m. Alle",ora,"e",minuto,"minuti del giorno",giorno,mese,anno,"e presenta una differenza di",differenza,"cm.")
+            stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livello,"m. Alle",ora,"e",minuto,"minuti del giorno",giorno,mese,anno,"e presenta una differenza di",differenza,"m.")
             print(stampa)
             write.table(tableIdro,file=nomeFile,row.names = FALSE,col.names = FALSE,sep=";",append=TRUE, quote=FALSE)
          }

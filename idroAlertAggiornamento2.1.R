@@ -116,6 +116,11 @@ for (n in lista) {
 #   print(url)
 
    pagina<-getURL(url)
+   
+   ##########################################
+   #####            VENETO             ######
+   ##########################################
+   
    if (listaFiumi[[n]][[5]]=="Veneto") {
       grepl("<table>",pagina)
       if (grepl("<table>",pagina[1])==TRUE) {
@@ -158,8 +163,8 @@ for (n in lista) {
          livelloConfMin<-as.numeric(gsub(",","\\.",livelloConfMin))
          if (livello<=livelloConfMin || is.na(livelloConfMin)) {
             tabellaIdro2[n,10]<-livello
-            tabellaIdro2[n,11]<-tableIdro$Data
-            tabellaIdro2[n,12]<-tableIdro$Ora
+            tabellaIdro2[n,11]<-as.character(tableIdro$Data)
+            tabellaIdro2[n,12]<-as.character(tableIdro$Ora)
          } else {
             tabellaIdro2[n,10]<-tabellaIdroBak[n,10]
             tabellaIdro2[n,11]<-as.character(tabellaIdroBak[n,11])
@@ -194,6 +199,11 @@ for (n in lista) {
          print(stampa)
       }   
    }
+   
+   ##########################################
+   #####            FRIULI             ######
+   ##########################################
+   
    if (listaFiumi[[n]][[5]]=="Friuli") {
       grepl("(Idrometro)",pagina)
       if (grepl("(Idrometro)",pagina)==TRUE) {
@@ -267,8 +277,8 @@ for (n in lista) {
             livelloConfMin<-as.numeric(gsub(",","\\.",livelloConfMin))
             if (livello<=livelloConfMin || is.na(livelloConfMin)) {
                tabellaIdro2[n,10]<-livello
-               tabellaIdro2[n,11]<-dataI
-               tabellaIdro2[n,12]<-oraI
+               tabellaIdro2[n,11]<-as.character(dataI)
+               tabellaIdro2[n,12]<-as.character(oraI)
             } else {
                tabellaIdro2[n,10]<-tabellaIdroBak[n,10]
                tabellaIdro2[n,11]<-as.character(tabellaIdroBak[n,11])
