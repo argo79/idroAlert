@@ -9,7 +9,7 @@ library(rgeos)
 #library(ggmap)
 library(scales)
 library(htmltab)
-options(java.parameters = "-Xmx8000m")
+options(java.parameters = "-Xmx500m")
 library(rJava)
 library(mailR)
 library(sendmailR)
@@ -20,19 +20,19 @@ library(linkR)
 library(xtable)
 
 # Legge file utenti e manda mail in caso di Alert positivi o richiesta di report.
-setwd("/home/argo/workspace/R/idroAlert1.0/")
+setwd("/home/argo/R-project/idroAlert1.0/")
 ######################
 ### TABELLA UTENTI ###
 ######################
 
 # recupero vecchio file tabellaIdro2
-tabellaIdro2<-read.csv("./report/tabellaIdroRep.csv")
-
+tabellaIdro2<-read.csv("./report/tabellaIdroRep.csv",sep=";")
+# tabellaBak<-tabellaIdro2
 elencoFiles<-list.files("*.conf",path="./conf/utenti/",include.dirs = TRUE)
 lunghezzaFiles<-length(elencoFiles)
 conteggio<-c(1:as.numeric(lunghezzaFiles))
 elencoUtenti<-data.frame()
-
+# numero<-1
 for (numero in conteggio) {
    nomeFile<-elencoFiles[numero]
    if (grepl(".conf",nomeFile)==TRUE) {
@@ -44,7 +44,7 @@ for (numero in conteggio) {
 
 # recupero file degli utenti
 #elencoUtenti<-c("Melloni","Bubu")
-# nomeUt<-2
+nomeUt<-c(1:length(elencoUtenti))
 nomeUtente<-as.character(elencoUtenti[nomeUt])
 for (nomeUtente in as.character(elencoUtenti)) {
    nomeFileUtente<-paste("utente-",nomeUtente,".conf",sep="")
@@ -88,7 +88,7 @@ for (nomeUtente in as.character(elencoUtenti)) {
    fiumi<-c(as.character(tabellaIdro2$Fiume))
    luoghi<-c(as.character(tabellaIdro2$Luogo))
    urls<-c(as.character(tabellaIdro2$Url))
-   # livMin<-c(as.numeric(tabellaIdro2$`Livello Minimo`))
+   # livMin<-c(as.numeric(tabellaIdro2$LivelloMinimo))
    regione<-c(as.character(tabellaIdro2$Regione))
    # listaProfile[1,21]
    # length(listaProfile[2,])
@@ -120,11 +120,15 @@ for (nomeUtente in as.character(elencoUtenti)) {
          livelloMin<-as.numeric(gsub(",",".",livelloMin))
          livelloMax<-as.character(tabellaFiumi[number,5])
          livelloMax<-as.numeric(gsub(",",".",livelloMax))
-         aggiornamento<-as.numeric(tabellaFiumi[number,6])
+         # aggiornamento<-as.numeric(tabellaFiumi[number,6])
          printTabFiumi<-filter(tabellaIdro2,tabellaIdro2$Luogo==idrometro)
          livelloFiumeUt<-as.character(printTabFiumi$Adesso)
          livelloFiumeUt<-as.numeric(gsub(",",".",livelloFiumeUt))
          livelloFiumeUt<-as.numeric(livelloFiumeUt)
+         differenzaPrec<-as.character(printTabFiumi$Differenza)
+         differenzaPrec<-as.numeric(gsub(",",".",differenzaPrec))
+         differenzaPrec<-as.numeric(differenzaPrec)
+         
          for (nomeLuogo in luoghi) {
             if (nomeLuogo==idrometro) {
                if (is.na(livelloFiumeUt)) {
@@ -137,14 +141,14 @@ for (nomeUtente in as.character(elencoUtenti)) {
                   }
                }  
                else if (livelloFiumeUt>livelloMin) {
-                  stampaRec<-paste("Il fiume", fiume,"a",idrometro,"ha superato il livello impostato di",livelloMin,"metri. Livello:",livelloFiumeUt,"metri.\n")
+                  stampaRec<-paste("Il fiume", fiume,"a",idrometro,"ha superato il livello impostato di",livelloMin,"metri. Livello:",livelloFiumeUt,"metri,",differenzaPrec," metri rispetto alla misura precedente.\n")
                   stampaRecTASopra<-paste(stampaRecTASopra,stampaRec,sep="")
-                  #print(stampaRecTASopra)
+                  # print(stampaRecTASopra)
                } 
                else if (livelloFiumeUt<livelloMax) {
-                  stampaRec<-paste("Il fiume", fiume,"a",idrometro,"è sceso rispetto al livello impostato di",livelloMax,"metri. Livello:",livelloFiumeUt,"metri.\n")
+                  stampaRec<-paste("Il fiume", fiume,"a",idrometro,"è sceso rispetto al livello impostato di",livelloMax,"metri. Livello:",livelloFiumeUt,"metri,",differenzaPrec," metri rispetto alla misura precedente.\n")
                   stampaRecTASotto<-paste(stampaRecTASotto,stampaRec,sep="")
-                  #print(stampaRecTASotto)
+                  # print(stampaRecTASotto)
                }
             }
          }
@@ -184,14 +188,14 @@ for (nomeUtente in as.character(elencoUtenti)) {
    tabellaIdro2$Adesso<-as.character(gsub("\\.",",",tabellaIdro2$Adesso))
    tabellaIdro2UT<-data.frame(tabellaIdro2[tabellaIdro2$Luogo %in% elencoIdro,])
    tabellaIdroUt<-merge(tabellaIdro2UT,tabellaFiumi,by="Luogo")
-   tabellaIdroUt<-tabellaIdroUt[,c(3,1,7,13,6,12,8,9)]
+   tabellaIdroUt<-tabellaIdroUt[,c(3,1,5,6,19,7,18,8,9,10:15)]
    # Raggruppo per fiume e regione
    tabellaIdroUt<-group_by(tabellaIdroUt,Fiume.x)
    tabellaIdroUt<-arrange(tabellaIdroUt,Fiume.x,Regione)
    # decommentare e/o modificare il separatore della data
    # tabellaIdro2UT$Data<-gsub("-","/",tabellaIdro2UT$Data)
    nomeFileTabUt<-paste("./report/tabellaFiumi-",nomeUtente,".csv",sep="")
-   colnames(tabellaIdroUt)<-c("Fiume","Idrometro","Regione","ASotto","Adesso","ASopra","Data","Ora")
+   colnames(tabellaIdroUt)<-c("Fiume","Idrometro","Regione","ASotto","Adesso","ASopra","Data","Ora","Differenza")
    #install.packages("stargazer")
    #library(stargazer)
    #stargazer(tabellaIdroUt,type="html", title="Descriptive statistics",out="table1.txt")
