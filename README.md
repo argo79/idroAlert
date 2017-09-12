@@ -1,5 +1,7 @@
 # IDRO ALERT 
 
+# VERSIONE 3.0
+
 Due script R:
 
 1- idroAlertAggiornamentiX.Y.R -> partendo dal file DB con i parametri dei fiumi salva un file con il livello , la differenza con la misura precedente, lo storico (data e ora) del livello minimo e massimo di OGNI IDROMETRO presente.
