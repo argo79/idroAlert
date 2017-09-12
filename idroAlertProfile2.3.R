@@ -28,6 +28,8 @@ setwd("/home/argo/R-project/idroAlert1.0/")
 # recupero vecchio file tabellaIdro2
 tabellaIdro2<-read.csv("./report/tabellaIdroRep.csv",sep=";")
 # tabellaBak<-tabellaIdro2
+tabellaIdro2$DiffSup<-NA
+# colnames(tabellaIdro2$DiffSup)<-"DiffSup"
 elencoFiles<-list.files("*.conf",path="./conf/utenti/",include.dirs = TRUE)
 lunghezzaFiles<-length(elencoFiles)
 conteggio<-c(1:as.numeric(lunghezzaFiles))
@@ -128,7 +130,8 @@ for (nomeUtente in as.character(elencoUtenti)) {
          differenzaPrec<-as.character(printTabFiumi$Differenza)
          differenzaPrec<-as.numeric(gsub(",",".",differenzaPrec))
          differenzaPrec<-as.numeric(differenzaPrec)
-         
+         differenzaSup<-as.numeric(livelloFiumeUt-livelloMin)
+         tabellaIdro2[number,16]<-differenzaSup
          for (nomeLuogo in luoghi) {
             if (nomeLuogo==idrometro) {
                if (is.na(livelloFiumeUt)) {
@@ -188,14 +191,14 @@ for (nomeUtente in as.character(elencoUtenti)) {
    tabellaIdro2$Adesso<-as.character(gsub("\\.",",",tabellaIdro2$Adesso))
    tabellaIdro2UT<-data.frame(tabellaIdro2[tabellaIdro2$Luogo %in% elencoIdro,])
    tabellaIdroUt<-merge(tabellaIdro2UT,tabellaFiumi,by="Luogo")
-   tabellaIdroUt<-tabellaIdroUt[,c(3,1,5,6,19,7,18,8,9,10:15)]
+   tabellaIdroUt<-tabellaIdroUt[,c(3,1,5,6,20,7,19,16,8,9,10:15)]
    # Raggruppo per fiume e regione
    tabellaIdroUt<-group_by(tabellaIdroUt,Fiume.x)
    tabellaIdroUt<-arrange(tabellaIdroUt,Fiume.x,Regione)
    # decommentare e/o modificare il separatore della data
    # tabellaIdro2UT$Data<-gsub("-","/",tabellaIdro2UT$Data)
    nomeFileTabUt<-paste("./report/tabellaFiumi-",nomeUtente,".csv",sep="")
-   colnames(tabellaIdroUt)<-c("Fiume","Idrometro","Regione","ASotto","Adesso","ASopra","Data","Ora","Differenza")
+   colnames(tabellaIdroUt)<-c("Fiume","Idrometro","Regione","Differenza","ASotto","Adesso","ASopra","DifSup","Data","Ora","Minimo","DataMin","OraMin","Massimo","DataMax","OraMax")
    #install.packages("stargazer")
    #library(stargazer)
    #stargazer(tabellaIdroUt,type="html", title="Descriptive statistics",out="table1.txt")

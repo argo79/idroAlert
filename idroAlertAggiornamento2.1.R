@@ -145,6 +145,7 @@ for (n in lista) {
          if (is.na(differenza)) {
             differenza<-0
          }
+         differenza<-format(round(differenza, 2), nsmall = 2)
          tabellaIdro2[n,6]<-differenza
          tabellaIdro2[n,7]<-livello
          tabellaIdro2[n,8]<-tableIdro$Data
@@ -182,7 +183,7 @@ for (n in lista) {
          nomeFile<-paste(fiume,idrometro,sep="-")
          nomeFile<-paste("./report/fiumi/Veneto/",nomeFile,".csv",sep="")
          #stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livello,"m.")
-         stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livelloM,"m. Alle",oraI,"e",minutoI,"minuti del giorno",giorno,mese,anno,"e presenta una differenza di",differenza,"m.")
+         stampa<-paste("L'idrometro del fiume",fiume,"a",listaFiumi[[n]][[3]],"segna",livello,"m. Alle",oraI,"e",minutoI,"minuti del giorno",giorno,mese,anno,"e presenta una differenza di",differenza,"m.")
          print(stampa)
          write.table(tableIdro,file=nomeFile,row.names = FALSE,col.names = FALSE,sep=";",append=TRUE,quote=FALSE)
       }
@@ -255,6 +256,7 @@ for (n in lista) {
             if (is.na(differenza)) {
                differenza<-0
             }
+            differenza<-format(round(differenza, 2), nsmall = 2)
             tabellaIdro2[n,6]<-differenza
             tabellaIdro2[n,7]<-livello
             tabellaIdro2[n,8]<-dataI
